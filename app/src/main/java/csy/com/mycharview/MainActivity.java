@@ -8,39 +8,45 @@ import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import csy.com.mycharview.base.BaseActivity;
+import csy.com.mycharview.waveformline.WaveActivity;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener{
 
-    @BindView(R.id.btLineChartActivityMore)
-    Button btLineChartActivityMore;
-    @BindView(R.id.btLineChartActivityOne)
-    Button btLineChartActivityOne;
-    @BindView(R.id.btLineChartActivityDynamic)
-    Button btLineChartActivityDynamic;
+
+    @BindView(R.id.btWaveActivity)
+    Button btWaveActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-        btLineChartActivityMore.setOnClickListener(this);
-        btLineChartActivityOne.setOnClickListener(this);
-        btLineChartActivityDynamic.setOnClickListener(this);
 
+        addAction();
     }
 
     @Override
-    public void onClick(View view) {
-        if (view==btLineChartActivityMore){
-            Intent intent = new Intent(MainActivity.this,LineChartActivityMore.class);
-            startActivity(intent);
-        }else if (view==btLineChartActivityOne){
-            Intent intent = new Intent(MainActivity.this,LineChartActivityOne.class);
-            startActivity(intent);
-        }else if (view == btLineChartActivityDynamic){
-            Intent intent = new Intent(MainActivity.this,LineChartActivityDynamic.class);
-            startActivity(intent);
+    public void addAction() {
+        btWaveActivity.setOnClickListener(this);
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btWaveActivity :
+                Intent intent = new Intent(MainActivity.this, WaveActivity.class);
+                startActivity(intent);
+                break;
+
+            default:
+                break;
         }
     }
 }

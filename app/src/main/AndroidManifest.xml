@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".waveformline.WaveActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,12 +17,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LineChartActivityMore">
-        </activity>
-        <activity android:name=".LineChartActivityOne">
-        </activity>
-        <activity android:name=".LineChartActivityDynamic">
-        </activity>
+        <!--<activity android:name=".waveformline.WaveActivity">-->
+        <!--</activity>-->
+
+
 
     </application>
 
