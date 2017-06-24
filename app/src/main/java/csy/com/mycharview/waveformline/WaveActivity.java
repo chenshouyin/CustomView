@@ -10,6 +10,7 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import csy.com.mycharview.R;
+import csy.com.mycharview.utils.ScreenUtils;
 import csy.com.mycharview.waveformline.bean.WavePoint;
 
 /**
@@ -36,7 +37,7 @@ public class WaveActivity extends AppCompatActivity {
             wavePoint.setY(random.nextInt(20));
             pointsList.add(wavePoint);
         }
+        waveLine.setBaseLine(ScreenUtils.getScreenHeightWithoutStatiusBar(WaveActivity.this));
         waveLine.setPoints(pointsList);
-
     }
 }

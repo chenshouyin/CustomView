@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 
 import java.util.List;
 
+import csy.com.mycharview.utils.Dbug;
 import csy.com.mycharview.waveformline.bean.WavePoint;
 
 /**
@@ -24,7 +25,17 @@ public class WaveLineView extends BaseWaveLineView {
     private int gridPaintStrokeWidth;//网格画笔粗细
     private String dataPaintColor;//数据颜色
     private int dataPaintStrokeWidth;//数据粗细
-    private int baseLine;//基线
+
+    public int getBaseLine() {
+        return baseLine;
+    }
+
+    public void setBaseLine(int baseLine) {
+        this.baseLine = baseLine;
+        Dbug.d(getClass().getSimpleName(),"==="+baseLine);
+    }
+
+    private int baseLine = 0;//基线
 
     public void setPoints(List<WavePoint> pointsList) {
         this.pointsList = pointsList;
@@ -51,7 +62,6 @@ public class WaveLineView extends BaseWaveLineView {
         gridPaintStrokeWidth = 1;
         dataPaintColor = "#000000";
         dataPaintStrokeWidth = 2;
-        baseLine = getHeight() / 2;
     }
 
 
@@ -83,7 +93,8 @@ public class WaveLineView extends BaseWaveLineView {
         dataPath.moveTo(pointsList.get(0).getX(), pointsList.get(0).getY() * smallSpaceY);//移动画笔位置到第一个点位置,默认是从0,0开始的
         for (int i = 0; i < pointsList.size() && pointsList.get(i).getX() * smallSpaceX < getWidth(); i++) {
             //1小格代表数字1 x方向每小格多少像素  y轴方向每小格多少像素
-            dataPath.lineTo(pointsList.get(i).getX() * smallSpaceX, pointsList.get(i).getY() * smallSpaceY);
+            float y =  pointsList.get(i).getY() * smallSpaceY;
+            dataPath.lineTo(pointsList.get(i).getX() * smallSpaceX,y);
         }
         //dataPath.close();//封闭  和不封闭 的图像相差大 一般用于比如三角形
         canvas.drawPath(dataPath, getmPaint());//绘制路径
