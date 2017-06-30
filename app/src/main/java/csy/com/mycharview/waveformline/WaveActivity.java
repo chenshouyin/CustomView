@@ -22,7 +22,7 @@ import csy.com.mycharview.waveformline.bean.WavePoint;
 public class WaveActivity extends AppCompatActivity {
 
     private List<WavePoint> pointsList;
-    private List<WavePoint> pointsList3;
+    private ArrayList<WavePoint> pointsList3;
 
     @BindView(R.id.waveLine)
     WaveLineView waveLine;

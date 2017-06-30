@@ -92,17 +92,19 @@ public class WaveLineView extends BaseWaveLineView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //高度一屏显示完,宽度自适应
-        baseLine = getHeight();
-        Dbug.d("","==baseLine=="+baseLine);
-        moveMinX = getWidth() - pointsList.size() * smallSpaceX;
-        Dbug.d("","==moveMinX=="+moveMinX);
+
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        //高度一屏显示完,宽度自适应
+        baseLine = getHeight();
+        Dbug.d("","==baseLine=="+baseLine);
+        moveMinX = getWidth() - pointsList.size() * smallSpaceX;
+        Dbug.d("","==moveMinX=="+moveMinX);
+
         //canvas.clipRect(0,0,getWidth()/2,getHeight()/2);//截取画布
         drawGrid(canvas);
         drawData(canvas);

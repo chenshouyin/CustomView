@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import csy.com.mycharview.utils.Dbug;
@@ -66,11 +67,14 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
     }
     private int baseLine = 0;//基线
 
-    public void setPoints(List<WavePoint> pointsList) {
+    public void setPoints(ArrayList<WavePoint> pointsList) {
         this.pointsList = pointsList;
+        pointsListOriginal = (ArrayList<WavePoint>) pointsList.clone();
+
     }
 
-    private List<WavePoint> pointsList;
+    private ArrayList<WavePoint> pointsList;
+    private ArrayList<WavePoint> pointsListOriginal;
 
     public WaveLineViewWithLargeData(Context context) {
         this(context, null);
@@ -127,7 +131,8 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
         //getmPaint().setStyle(Paint.Style.FILL_AND_STROKE);//实心填充
 
         Path dataPath = new Path();
-        for (int i = 0; i < pointsList.size() &&  pointsList.get(i).getX()<=getWidth()/2; i++) {
+//        for (int i = 0; i < pointsList.size() &&  pointsList.get(i).getX()<=getWidth()/2; i++) {
+        for (int i = 0; i < pointsList.size(); i++) {
             //1小格代表数字1 x方向每小格多少像素  y轴方向每小格多少像素
             float y =  pointsList.get(i).getY() * smallSpaceY;
             y = Math.abs(y-baseLine);
@@ -233,5 +238,13 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
         Dbug.d(getClass().getSimpleName(),"==dispatchTouchEvent==");
         return super.dispatchTouchEvent(event);
 //        return true;//此处返回true不会走onTouchEvent了
+    }
+
+
+    private ArrayList<WavePoint> filterData(int start,int len){
+        for (int i=0;i<pointsListOriginal.size();i++){
+
+        }
+        return null;
     }
 }

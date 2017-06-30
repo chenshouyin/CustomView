@@ -100,17 +100,19 @@ public class WaveLineViewWithBuffer extends BaseWaveLineView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //高度一屏显示完,宽度自适应
-        baseLine = getHeight();
-        Dbug.d("","==baseLine=="+baseLine);
-        moveMinX = getWidth() - pointsList.size() * smallSpaceX;
-        Dbug.d("","==baseLine=="+moveMinX);
+
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        //高度一屏显示完,宽度自适应
+        baseLine = getHeight();
+        Dbug.d("","==baseLine=="+baseLine);
+        moveMinX = getWidth() - pointsList.size() * smallSpaceX;
+        Dbug.d("","==baseLine=="+moveMinX);
+
         if (bubufferBitmap == null){
             bubufferBitmap = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ARGB_8888);
             bufferCanvas = new Canvas();
@@ -150,6 +152,8 @@ public class WaveLineViewWithBuffer extends BaseWaveLineView {
             }else{
                 dataPath.lineTo(x,y);
             }
+            canvas.drawCircle(x,y,5,getmPaint());//画顶上面的圆角
+
         }
         //dataPath.close();//封闭  和不封闭 的图像相差大 一般用于比如三角形
         canvas.drawPath(dataPath, getmPaint());//绘制路径
