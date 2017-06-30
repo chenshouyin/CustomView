@@ -1,10 +1,13 @@
 package csy.com.mycharview.waveformline;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -18,7 +21,7 @@ import csy.com.mycharview.waveformline.bean.WavePoint;
  * Created by user on 2017-6-14.
  */
 
-public class WaveLineView extends BaseWaveLineView {
+public class WaveLineViewWithBuffer extends BaseWaveLineView {
 
     private int smallSpaceX = 20;//水平方向一小格代表多少像素
     private int smallSpaceY = 20;//垂直方向一小格代表多少像素
@@ -43,7 +46,10 @@ public class WaveLineView extends BaseWaveLineView {
     private float actionMoveDis = 0;//手指水平方向移动的距离
     private float moveMaxX = 0;//第一个点可移动的最大距离
     private float moveMinX = 0;//第一个点可移动的最小距离
-    private float xRoundPoint = 0;//圆点坐标 移动过程中可能会变
+    private float xRoundPoint = 0;//圆点坐标 移动中可能会变
+
+    private Bitmap bubufferBitmap;//缓冲图片,先花在此图片上,画完之后一次性显示在屏幕
+    private Canvas bufferCanvas;
     public int getBaseLine() {
         return baseLine;
     }
@@ -67,15 +73,15 @@ public class WaveLineView extends BaseWaveLineView {
 
     private List<WavePoint> pointsList;
 
-    public WaveLineView(Context context) {
+    public WaveLineViewWithBuffer(Context context) {
         this(context, null);
     }
 
-    public WaveLineView(Context context, @Nullable AttributeSet attrs) {
+    public WaveLineViewWithBuffer(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public WaveLineView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public WaveLineViewWithBuffer(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);//获取一些自定义属性
         initData();
     }
@@ -86,6 +92,8 @@ public class WaveLineView extends BaseWaveLineView {
         gridPaintStrokeWidth = 1;
         dataPaintColor = "#000000";
         dataPaintStrokeWidth = 2;
+
+
     }
 
 
@@ -96,18 +104,27 @@ public class WaveLineView extends BaseWaveLineView {
         baseLine = getHeight();
         Dbug.d("","==baseLine=="+baseLine);
         moveMinX = getWidth() - pointsList.size() * smallSpaceX;
-        Dbug.d("","==moveMinX=="+moveMinX);
+        Dbug.d("","==baseLine=="+moveMinX);
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //canvas.clipRect(0,0,getWidth()/2,getHeight()/2);//截取画布
-        drawGrid(canvas);
-        drawData(canvas);
-        drawText(canvas);
+        if (bubufferBitmap == null){
+            bubufferBitmap = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ARGB_8888);
+            bufferCanvas = new Canvas();
+            bufferCanvas.setBitmap(bubufferBitmap);
+            drawGrid(bufferCanvas);//现在缓冲区画
+            drawData(bufferCanvas);
+            drawText(bufferCanvas);
+        }else{
+            //清屏
+            canvas.drawBitmap(bubufferBitmap,0,0,null);//再显示再屏幕
+        }
+
     }
+
 
     //画数据 数据转换为像素 *smallSpace
     private void drawData(Canvas canvas) {
@@ -133,11 +150,7 @@ public class WaveLineView extends BaseWaveLineView {
             }else{
                 dataPath.lineTo(x,y);
             }
-            canvas.drawCircle(x,y,5,getmPaint());//画顶上面的圆角
-            Dbug.d(getClass().getSimpleName(),"====绘制中....====");
         }
-        Dbug.d(getClass().getSimpleName(),"====绘制完成....====");
-
         //dataPath.close();//封闭  和不封闭 的图像相差大 一般用于比如三角形
         canvas.drawPath(dataPath, getmPaint());//绘制路径
     }
@@ -198,13 +211,20 @@ public class WaveLineView extends BaseWaveLineView {
                     actionMoveDis = smallSpaceX;
                 }
                 xRoundPoint +=actionMoveDis;
-                if (xRoundPoint>0 ){ //边界判断
+                if (xRoundPoint>0 ){
                     xRoundPoint -= actionMoveDis;
                 }else if (xRoundPoint< -(pointsList.size()*smallSpaceX*perPointXSpase - getWidth())){
                     xRoundPoint -= actionMoveDis;
                 }else{
-                    invalidate();//重绘
+                    bubufferBitmap = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ARGB_8888);
+                    bufferCanvas = new Canvas();
+                    bufferCanvas.setBitmap(bubufferBitmap);
+                    drawGrid(bufferCanvas);//先在缓冲区画
+                    drawData(bufferCanvas);
+                    drawText(bufferCanvas);
+                    invalidate();//再显示在屏幕
                 }
+                //边界判断
                 Dbug.d(getClass().getSimpleName(),"==ACTION_MOVE==dis=="+actionMoveDis);
                 break;
 

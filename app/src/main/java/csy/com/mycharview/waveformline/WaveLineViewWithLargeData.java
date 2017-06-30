@@ -16,9 +16,11 @@ import csy.com.mycharview.waveformline.bean.WavePoint;
 
 /**
  * Created by user on 2017-6-14.
+ *
+ * 数据源非常大  分屏显示
  */
 
-public class WaveLineView extends BaseWaveLineView {
+public class WaveLineViewWithLargeData extends BaseWaveLineView {
 
     private int smallSpaceX = 20;//水平方向一小格代表多少像素
     private int smallSpaceY = 20;//垂直方向一小格代表多少像素
@@ -44,6 +46,9 @@ public class WaveLineView extends BaseWaveLineView {
     private float moveMaxX = 0;//第一个点可移动的最大距离
     private float moveMinX = 0;//第一个点可移动的最小距离
     private float xRoundPoint = 0;//圆点坐标 移动过程中可能会变
+
+    private int currentDataIndex = 0;//当前数据的起始位置
+    private int perPagePointNum = 0;//一屏可以显示多少个点
     public int getBaseLine() {
         return baseLine;
     }
@@ -67,15 +72,15 @@ public class WaveLineView extends BaseWaveLineView {
 
     private List<WavePoint> pointsList;
 
-    public WaveLineView(Context context) {
+    public WaveLineViewWithLargeData(Context context) {
         this(context, null);
     }
 
-    public WaveLineView(Context context, @Nullable AttributeSet attrs) {
+    public WaveLineViewWithLargeData(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public WaveLineView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public WaveLineViewWithLargeData(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);//获取一些自定义属性
         initData();
     }
@@ -97,7 +102,8 @@ public class WaveLineView extends BaseWaveLineView {
         Dbug.d("","==baseLine=="+baseLine);
         moveMinX = getWidth() - pointsList.size() * smallSpaceX;
         Dbug.d("","==moveMinX=="+moveMinX);
-
+        //计算一屏可以显示多少个点
+        perPagePointNum = getWidth()/(smallSpaceX*perPointXSpase);//每小格所占的像素*每个点占几格
     }
 
     @Override
@@ -121,7 +127,7 @@ public class WaveLineView extends BaseWaveLineView {
         //getmPaint().setStyle(Paint.Style.FILL_AND_STROKE);//实心填充
 
         Path dataPath = new Path();
-        for (int i = 0; i < pointsList.size(); i++) {
+        for (int i = 0; i < pointsList.size() &&  pointsList.get(i).getX()<=getWidth()/2; i++) {
             //1小格代表数字1 x方向每小格多少像素  y轴方向每小格多少像素
             float y =  pointsList.get(i).getY() * smallSpaceY;
             y = Math.abs(y-baseLine);
@@ -164,7 +170,7 @@ public class WaveLineView extends BaseWaveLineView {
         getmPaint().setStrokeWidth(dataPaintStrokeWidth);
         getmPaint().setAntiAlias(true);// 消除锐化  不然线条毛糙
         getmPaint().setStyle(Paint.Style.STROKE);//一定要设置样式为STROKE 空心 不然默认为实心,画出来的一团黑
-        for (int i = 0; i < pointsList.size(); i++) {
+        for (int i = 0; i < pointsList.size() &&  pointsList.get(i).getX()<=getWidth()/2; i++) {
             //1小格代表数字1 x方向每小格多少像素  y轴方向每小格多少像素
             float y =  pointsList.get(i).getY() * smallSpaceY;
             y = Math.abs(y-baseLine);

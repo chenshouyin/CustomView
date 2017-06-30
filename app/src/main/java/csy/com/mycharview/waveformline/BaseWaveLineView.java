@@ -36,5 +36,5 @@ public abstract class BaseWaveLineView extends View{
     /**
      * 初始化资源
      */
-    abstract void initData();
+    public abstract void initData();
 }

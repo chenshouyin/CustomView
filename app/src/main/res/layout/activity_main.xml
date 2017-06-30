@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,17 +7,35 @@
     tools:context="csy.com.mycharview.MainActivity">
 
     <Button
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:id="@+id/btWaveActivity"
+        android:id="@+id/btDrawData1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="折线"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.058" />
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="不使用双缓冲画图" />
+
+    <Button
+        android:layout_margin="5dp"
+        android:id="@+id/btDrawData2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btDrawData1"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="使用双缓冲画图" />
 
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/btWaveActivity"
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btDrawData2"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="非缓冲、缓冲画、大量数据分屏折线图" />
+
+
+
+
+</RelativeLayout>

@@ -22,9 +22,14 @@ import csy.com.mycharview.waveformline.bean.WavePoint;
 public class WaveActivity extends AppCompatActivity {
 
     private List<WavePoint> pointsList;
+    private List<WavePoint> pointsList3;
 
     @BindView(R.id.waveLine)
     WaveLineView waveLine;
+    @BindView(R.id.waveLine2)
+    WaveLineViewWithBuffer waveLine2;
+    @BindView(R.id.waveLine3)
+    WaveLineViewWithLargeData waveLine3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,27 @@ public class WaveActivity extends AppCompatActivity {
         //waveLine.setPerPointYSpase(2); Y的间隔不是连续的
         waveLine.setBaseLine(ScreenUtils.getScreenHeightWithoutStatiusBar(WaveActivity.this));
         waveLine.setPoints(pointsList);
+
+
+        waveLine2.setPerPointXSpase(1);
+        //waveLine.setPerPointYSpase(2); Y的间隔不是连续的
+        waveLine2.setBaseLine(ScreenUtils.getScreenHeightWithoutStatiusBar(WaveActivity.this));
+        waveLine2.setPoints(pointsList);
+
+
+        pointsList3 = new ArrayList<>();
+        for (int i = 0; i < 4000; i+=1) {//模拟100个数据
+            Random random = new Random();
+            WavePoint wavePoint = new WavePoint();
+            wavePoint.setX(i);
+            wavePoint.setY(random.nextInt(20));
+            pointsList3.add(wavePoint);
+        }
+        waveLine3.setPerPointXSpase(1);
+        //waveLine.setPerPointYSpase(2); Y的间隔不是连续的
+        waveLine3.setBaseLine(ScreenUtils.getScreenHeightWithoutStatiusBar(WaveActivity.this));
+        waveLine3.setPoints(pointsList3);
+
     }
 
 
