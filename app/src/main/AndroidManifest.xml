@@ -24,6 +24,11 @@
         </activity>
         <activity android:name=".CustomViewBufferActivity">
         </activity>
+        <activity android:name=".waveformline.WaveWithLargeDataActivity">
+        </activity>
+
+
+
     </application>
 
 </manifest>

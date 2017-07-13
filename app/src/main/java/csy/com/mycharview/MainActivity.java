@@ -10,6 +10,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import csy.com.mycharview.base.BaseActivity;
 import csy.com.mycharview.waveformline.WaveActivity;
+import csy.com.mycharview.waveformline.WaveWithLargeDataActivity;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -20,6 +21,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     Button btDrawData2;
     @BindView(R.id.btWaveActivity)
     Button btWaveActivity;
+    @BindView(R.id.btWaveActivity2)
+    Button btWaveActivity2;
+
+
 //    @BindView(R.id.btWaveActivity2)
 //    Button btWaveActivity2;
 
@@ -43,7 +48,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    @OnClick({R.id.btDrawData1, R.id.btDrawData2, R.id.btWaveActivity})
+    @OnClick({R.id.btDrawData1, R.id.btDrawData2, R.id.btWaveActivity, R.id.btWaveActivity2})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btDrawData1:
@@ -58,6 +63,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent(MainActivity.this, WaveActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.btWaveActivity2:
+                Intent intent4 = new Intent(MainActivity.this, WaveWithLargeDataActivity.class);
+                startActivity(intent4);
+                break;
+
         }
     }
 

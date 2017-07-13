@@ -28,8 +28,7 @@ public class WaveActivity extends AppCompatActivity {
     WaveLineView waveLine;
     @BindView(R.id.waveLine2)
     WaveLineViewWithBuffer waveLine2;
-    @BindView(R.id.waveLine3)
-    WaveLineViewWithLargeData waveLine3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +55,7 @@ public class WaveActivity extends AppCompatActivity {
         waveLine2.setPoints(pointsList);
 
 
-        pointsList3 = new ArrayList<>();
-        for (int i = 0; i < 4000; i+=1) {//模拟100个数据
-            Random random = new Random();
-            WavePoint wavePoint = new WavePoint();
-            wavePoint.setX(i);
-            wavePoint.setY(random.nextInt(20));
-            pointsList3.add(wavePoint);
-        }
-        waveLine3.setPerPointXSpase(1);
-        //waveLine.setPerPointYSpase(2); Y的间隔不是连续的
-        waveLine3.setBaseLine(ScreenUtils.getScreenHeightWithoutStatiusBar(WaveActivity.this));
-        waveLine3.setPoints(pointsList3);
+
 
     }
 

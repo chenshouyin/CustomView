@@ -34,7 +34,7 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
         this.perPointXSpase = perPointXSpase;
     }
 
-    private int perPointXSpase =0;//每个点水平方向代表的小格子 由数据点的间隔决定
+    private int perPointXSpase =1;//每个点水平方向代表的小格子 由数据点的间隔决定
     private int perPointYSpase =0;
     private String gridPaintColor;//网格颜色
     private int gridPaintStrokeWidth;//网格画笔粗细
@@ -107,13 +107,24 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
         moveMinX = getWidth() - pointsList.size() * smallSpaceX;
         Dbug.d("","==moveMinX=="+moveMinX);
         //计算一屏可以显示多少个点
-        perPagePointNum = getWidth()/(smallSpaceX*perPointXSpase);//每小格所占的像素*每个点占几格
+        if (getWidth()*1.0f/(smallSpaceX*perPointXSpase) >getWidth()/(smallSpaceX*perPointXSpase)){//如果有小数
+            perPagePointNum = getWidth()/(smallSpaceX*perPointXSpase) + 1;//每小格所占的像素*每个点占几格
+        }else{
+            perPagePointNum = getWidth()/(smallSpaceX*perPointXSpase);//每小格所占的像素*每个点占几格
+        }
+        //filterData(currentDataIndex,perPagePointNum);//currentDataIndex 不知为何为-1
+        filterData(0,perPagePointNum);//取一屏幕的点
+
+        Dbug.d("","==onMeasure==currentDataIndex=="+currentDataIndex);
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //canvas.clipRect(0,0,getWidth()/2,getHeight()/2);//截取画布
+        Dbug.d("","==onDraw==");
+
         drawGrid(canvas);
         drawData(canvas);
         drawText(canvas);
@@ -131,12 +142,12 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
         //getmPaint().setStyle(Paint.Style.FILL_AND_STROKE);//实心填充
 
         Path dataPath = new Path();
-//        for (int i = 0; i < pointsList.size() &&  pointsList.get(i).getX()<=getWidth()/2; i++) {
-        for (int i = 0; i < pointsList.size(); i++) {
+        for (int i = 0; i < pointsList.size() ; i++) {
+//        for (int i = 0; i < pointsList.size(); i++) {
             //1小格代表数字1 x方向每小格多少像素  y轴方向每小格多少像素
             float y =  pointsList.get(i).getY() * smallSpaceY;
             y = Math.abs(y-baseLine);
-            float x = pointsList.get(i).getX() * smallSpaceX;
+            float x = pointsList.get(i).getX() * smallSpaceX*perPointXSpase;
             //x = x + xRoundPoint*smallSpaceX;
             x = x + xRoundPoint;//偏移量
             if (i==0){
@@ -145,7 +156,7 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
                 dataPath.lineTo(x,y);
             }
             canvas.drawCircle(x,y,5,getmPaint());//画顶上面的圆角
-            Dbug.d(getClass().getSimpleName(),"====绘制中....====");
+            //Dbug.d(getClass().getSimpleName(),"====绘制中....====");
         }
         Dbug.d(getClass().getSimpleName(),"====绘制完成....====");
 
@@ -175,11 +186,11 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
         getmPaint().setStrokeWidth(dataPaintStrokeWidth);
         getmPaint().setAntiAlias(true);// 消除锐化  不然线条毛糙
         getmPaint().setStyle(Paint.Style.STROKE);//一定要设置样式为STROKE 空心 不然默认为实心,画出来的一团黑
-        for (int i = 0; i < pointsList.size() &&  pointsList.get(i).getX()<=getWidth()/2; i++) {
+        for (int i = 0; i < pointsList.size(); i++) {
             //1小格代表数字1 x方向每小格多少像素  y轴方向每小格多少像素
             float y =  pointsList.get(i).getY() * smallSpaceY;
             y = Math.abs(y-baseLine);
-            float x = pointsList.get(i).getX() * smallSpaceX;
+            float x = pointsList.get(i).getX() * smallSpaceX*perPointXSpase;
             //x = x + xRoundPoint*smallSpaceX;
             x = x + xRoundPoint;//偏移量
             canvas.drawText(""+pointsList.get(i).getX(),x,getHeight()-smallSpaceY,getmPaint());//画上文字
@@ -197,9 +208,9 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
 
             case MotionEvent.ACTION_MOVE:
                 //如果所有点的宽度不足一屏 则不可滑动
-                if (smallSpaceX*pointsList.size()<=getWidth()){
-                    return true;
-                }
+//                if (smallSpaceX*pointsList.size()*perPointXSpase<=getWidth()){
+//                    return true;
+//                }
                 //需要加判断 移动到左边第一个点的时候不在移动  移动到右边第一个点的时候不让其再移动
                 //Dbug.d(getClass().getSimpleName(),"==ACTION_MOVE=="+event.getX() +"==="+event.getY());
                 actionMoveDis = (int)(event.getX() - actionDownStartX);
@@ -214,9 +225,20 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
                 }else if (xRoundPoint< -(pointsList.size()*smallSpaceX*perPointXSpase - getWidth())){
                     xRoundPoint -= actionMoveDis;
                 }else{
+                    //计算偏移了多少个点
+                    int pointCount = 0;
+                    if (xRoundPoint/smallSpaceX*perPointXSpase>(int)(xRoundPoint/(smallSpaceX*perPointXSpase))){
+                        pointCount = (int)(xRoundPoint/(smallSpaceX*perPointXSpase)) + 1;
+                    }else{
+                        pointCount = (int)(xRoundPoint/(smallSpaceX*perPointXSpase));
+                    }
+                    currentDataIndex +=pointCount;//起始位置偏移
+                    if (currentDataIndex<0)
+                        currentDataIndex = 0;
+                    Dbug.d(getClass().getSimpleName(),"==ACTION_MOVE==currentDataIndex=="+currentDataIndex+"===="+perPagePointNum);
+                    filterData(currentDataIndex,perPagePointNum);//设置起始位置,重新取数据
                     invalidate();//重绘
                 }
-                Dbug.d(getClass().getSimpleName(),"==ACTION_MOVE==dis=="+actionMoveDis);
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -233,18 +255,29 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
     }
 
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        Dbug.d(getClass().getSimpleName(),"==dispatchTouchEvent==");
-        return super.dispatchTouchEvent(event);
-//        return true;//此处返回true不会走onTouchEvent了
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent event) {
+//        return super.dispatchTouchEvent(event);
+////        return true;//此处返回true不会走onTouchEvent了
+////        return false;
+//
+//    }
 
 
     private ArrayList<WavePoint> filterData(int start,int len){
-        for (int i=0;i<pointsListOriginal.size();i++){
-
+        if (len>pointsListOriginal.size())
+            len = pointsListOriginal.size();
+        Dbug.d(getClass().getSimpleName(),"====filterData.pointsListOriginal...===="+pointsListOriginal.size());
+        Dbug.d(getClass().getSimpleName(),"====filterData..pointsList..===="+pointsList.size());
+        pointsList.clear();
+        for (int i=start;i<pointsListOriginal.size() && i< len;i++){
+            pointsList.add(pointsListOriginal.get(i));
+            Dbug.d(getClass().getSimpleName(),"====filterData....===="+i);
         }
-        return null;
+        currentDataIndex += pointsList.size()-1;//当前点的位置
+        Dbug.d(getClass().getSimpleName(),"====filterData..完成..===="+pointsList.size());
+
+        //invalidate();//重绘
+        return pointsList;
     }
 }
