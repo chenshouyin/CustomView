@@ -34,16 +34,17 @@ public class WaveWithLargeDataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wave_with_large_data);
         ButterKnife.bind(this);
 
+        Dbug.d("WaveWithLargeDataActivity","onCreate");
 
         pointsList3 = new ArrayList<>();
-        for (int i = 0; i < 4000; i+=4) {//模拟100个数据
+        for (int i = 0; i < 4000; i+=2) {//模拟100个数据
             Random random = new Random();
             WavePoint wavePoint = new WavePoint();
             wavePoint.setX(i);
             wavePoint.setY(random.nextInt(20));
             pointsList3.add(wavePoint);
         }
-        waveLine3.setPerPointXSpase(4);
+        waveLine3.setPerPointXSpase(2);
         //waveLine.setPerPointYSpase(2); Y的间隔不是连续的
         waveLine3.setBaseLine(ScreenUtils.getScreenHeightWithoutStatiusBar(WaveWithLargeDataActivity.this));
         waveLine3.setPoints(pointsList3);

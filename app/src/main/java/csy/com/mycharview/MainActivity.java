@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import csy.com.mycharview.base.BaseActivity;
+import csy.com.mycharview.utils.Dbug;
 import csy.com.mycharview.waveformline.WaveActivity;
 import csy.com.mycharview.waveformline.WaveWithLargeDataActivity;
 
@@ -39,7 +41,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void addAction() {
-        btWaveActivity.setOnClickListener(this);
+
     }
 
     @Override
@@ -62,6 +64,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btWaveActivity:
                 Intent intent = new Intent(MainActivity.this, WaveActivity.class);
                 startActivity(intent);
+
                 break;
             case R.id.btWaveActivity2:
                 Intent intent4 = new Intent(MainActivity.this, WaveWithLargeDataActivity.class);
