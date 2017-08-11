@@ -26,7 +26,8 @@
         </activity>
         <activity android:name=".waveformline.WaveWithLargeDataActivity">
         </activity>
-
+        <activity android:name=".MyWaveViewActivity1">
+        </activity>
 
 
     </application>

@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    @OnClick({R.id.btDrawData1, R.id.btDrawData2, R.id.btWaveActivity, R.id.btWaveActivity2})
+    @OnClick({R.id.btDrawData1, R.id.btDrawData2, R.id.btWaveActivity, R.id.btWaveActivity2,R.id.btWaveActivity3})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btDrawData1:
@@ -69,6 +69,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btWaveActivity2:
                 Intent intent4 = new Intent(MainActivity.this, WaveWithLargeDataActivity.class);
                 startActivity(intent4);
+                break;
+
+            case R.id.btWaveActivity3:
+                Intent intent5 = new Intent(MainActivity.this, MyWaveViewActivity1.class);
+                startActivity(intent5);
                 break;
 
         }
