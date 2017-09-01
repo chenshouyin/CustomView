@@ -123,7 +123,6 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //canvas.clipRect(0,0,getWidth()/2,getHeight()/2);//截取画布
-        Dbug.d("","==onDraw==");
 
         drawGrid(canvas);
         drawData(canvas);
@@ -158,7 +157,6 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
             canvas.drawCircle(x,y,5,getmPaint());//画顶上面的圆角
             //Dbug.d(getClass().getSimpleName(),"====绘制中....====");
         }
-        Dbug.d(getClass().getSimpleName(),"====绘制完成....====");
 
         //dataPath.close();//封闭  和不封闭 的图像相差大 一般用于比如三角形
         canvas.drawPath(dataPath, getmPaint());//绘制路径
@@ -208,41 +206,50 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
 
             case MotionEvent.ACTION_MOVE:
                 //如果所有点的宽度不足一屏 则不可滑动
-//                if (smallSpaceX*pointsList.size()*perPointXSpase<=getWidth()){
-//                    return true;
-//                }
+                if (smallSpaceX*pointsList.size()*perPointXSpase<=getWidth()){
+                    return true;
+                }
                 //需要加判断 移动到左边第一个点的时候不在移动  移动到右边第一个点的时候不让其再移动
                 //Dbug.d(getClass().getSimpleName(),"==ACTION_MOVE=="+event.getX() +"==="+event.getY());
                 actionMoveDis = (int)(event.getX() - actionDownStartX);
                 actionDownStartX = event.getX();//有时候移动不放手
-                actionMoveDis = (actionMoveDis%smallSpaceX)*smallSpaceX;//保证移动的为几小格
-                if ((int)actionMoveDis==0){
-                    actionMoveDis = smallSpaceX;
-                }
+                if (Math.abs(actionMoveDis)<perPointXSpase*smallSpaceX)
+//                if (Math.abs(actionMoveDis)<smallSpaceX)
+                    return true;//小于一格的话不做刷新处理,防止闪屏
+                float tempDisCount  = actionMoveDis*1.0f/(smallSpaceX*perPointXSpase);
+//                if (tempDisCount>(int)(tempDisCount)){
+//                    tempDisCount = (int)(tempDisCount) + 1;
+//                }else{
+//                    tempDisCount =  (int)(tempDisCount);
+//                }
+                tempDisCount =  (int)(tempDisCount);
+                actionMoveDis = tempDisCount*smallSpaceX*perPointXSpase;//保证移动的为最小单位
                 xRoundPoint +=actionMoveDis;
                 if (xRoundPoint>0 ){ //边界判断
                     xRoundPoint -= actionMoveDis;
-                }else if (xRoundPoint< -(pointsList.size()*smallSpaceX*perPointXSpase - getWidth())){
+                    Dbug.d("ACTION_MOVE","===xRoundPoint>0===");
+                }else if (xRoundPoint< -(pointsListOriginal.size()*smallSpaceX*perPointXSpase - getWidth())){//边界
                     xRoundPoint -= actionMoveDis;
+                    Dbug.d("ACTION_MOVE","===xRoundPoint< -(pointsList.size()*smallSpaceX*perPointXSpase - getWidth())===");
                 }else{
                     //计算偏移了多少个点
+                    Dbug.d("ACTION_MOVE","===计算偏移了多少个点=xRoundPoint===="+xRoundPoint);
                     int pointCount = 0;
-                    if (xRoundPoint/smallSpaceX*perPointXSpase>(int)(xRoundPoint/(smallSpaceX*perPointXSpase))){
-                        pointCount = (int)(xRoundPoint/(smallSpaceX*perPointXSpase)) + 1;
-                    }else{
-                        pointCount = (int)(xRoundPoint/(smallSpaceX*perPointXSpase));
-                    }
+                    float tempCount  = xRoundPoint*1.0f/(smallSpaceX*perPointXSpase);
+                    pointCount =  (int)(tempCount);
+                    Dbug.d("ACTION_MOVE","===计算偏移了多少个点==pointCount==="+pointCount);
                     currentDataIndex +=pointCount;//起始位置偏移
-                    if (currentDataIndex<0)
+                    currentDataIndex = Math.abs(currentDataIndex);
+                    if (xRoundPoint==0){
                         currentDataIndex = 0;
-                    Dbug.d(getClass().getSimpleName(),"==ACTION_MOVE==currentDataIndex=="+currentDataIndex+"===="+perPagePointNum);
-                    filterData(currentDataIndex,perPagePointNum);//设置起始位置,重新取数据
+                    }
+                    Dbug.d("ACTION_MOVE","===计算偏移了多少个点==currentDataIndex==="+currentDataIndex);
+                    filterData(currentDataIndex,perPagePointNum);//设置起始位置,重新取数据  如果不足 perPagePointNum 个
                     invalidate();//重绘
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
-                //Dbug.d(getClass().getSimpleName(),"==ACTION_UP=="+event.getX() +"==="+event.getY());
                 break;
 
             default:
@@ -267,14 +274,12 @@ public class WaveLineViewWithLargeData extends BaseWaveLineView {
     private ArrayList<WavePoint> filterData(int start,int len){
         if (len>pointsListOriginal.size())
             len = pointsListOriginal.size();
-        Dbug.d(getClass().getSimpleName(),"====filterData.pointsListOriginal...===="+pointsListOriginal.size());
-        Dbug.d(getClass().getSimpleName(),"====filterData..pointsList..===="+pointsList.size());
         pointsList.clear();
-        for (int i=start;i<pointsListOriginal.size() && i< len;i++){
+        for (int i=start;i<pointsListOriginal.size() && i< start + len;i++){
             pointsList.add(pointsListOriginal.get(i));
-            Dbug.d(getClass().getSimpleName(),"====filterData....===="+i);
         }
-        currentDataIndex += pointsList.size()-1;//当前点的位置
+
+//        currentDataIndex += pointsList.size()-1;//当前点的位置
         Dbug.d(getClass().getSimpleName(),"====filterData..完成..===="+pointsList.size());
 
         //invalidate();//重绘
